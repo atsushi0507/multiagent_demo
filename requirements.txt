@@ -1,0 +1,5 @@
+langgraph==0.3.0
+openai==1.64.0
+Requests==2.32.3
+streamlit==1.32.0
+streamlit==1.31.1
