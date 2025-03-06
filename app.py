@@ -15,7 +15,8 @@ with st.sidebar:
     st.session_state.api_key = st.text_input(
         "OpenAIのAPIキー",
         value=None,
-        placeholder="OpenAIのAPIキーを入力してください"
+        placeholder="OpenAIのAPIキーを入力してください",
+        type="password"
     )
 
 departure = st.text_input("出発駅", placeholder="例: 東京駅")
