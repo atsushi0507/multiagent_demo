@@ -1,5 +1,5 @@
 import langgraph
-from langgraph.graph import StateGraph
+from langgraph.graph import StateGraph, START, END
 from typing import TypedDict
 from sightseeing_agent import sightseeing_agent
 from meal_agent import generate_meal_recommendations
@@ -69,12 +69,14 @@ graph.add_node("itinerary", itinerary_node)
 
 graph.add_conditional_edges("sightseeing", condition_function)
 # hotel -> meal (stay = True の場合)
+graph.add_edge(START, "sightseeing")
 graph.add_edge("hotel", "meal")
 graph.add_edge("meal", "itinerary")
+graph.add_edge("itinerary", END)
 
-# スタート地点から観光ノードへ
-graph.set_entry_point("sightseeing")
-graph.set_finish_point("itinerary")
+# # スタート地点から観光ノードへ
+# graph.set_entry_point("sightseeing")
+# graph.set_finish_point("itinerary")
 
 # グラフの構築
 app = graph.compile()
