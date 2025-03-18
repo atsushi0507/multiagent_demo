@@ -1,6 +1,6 @@
 import langgraph
 from langgraph.graph import StateGraph, START, END
-from typing import TypedDict
+from typing import TypedDict, Literal
 from sightseeing_agent import sightseeing_agent
 from meal_agent import generate_meal_recommendations
 from hotel_agent import generate_hotel_recommendations
@@ -55,8 +55,15 @@ def itinerary_node(state: TravelState):
     )
     return {"itinerary_plan": itinerary}
 
-def condition_function(state: TravelState):
-    return "hotel" if state["stay"] else "meal"
+# 戻り値のヒントがないとグラフ描画時に繋がって欲しくないノードが繋がってしまう
+def condition_function(state: TravelState) -> Literal[
+    "hotel",
+    "meal"
+]:
+    if state["stay"]:
+        return "hotel"
+    else:
+        return "meal"
 
 # LangGraph のグラフ作成
 graph = StateGraph(TravelState)
@@ -67,16 +74,12 @@ graph.add_node("meal", meal_node)
 graph.add_node("hotel", hotel_node)
 graph.add_node("itinerary", itinerary_node)
 
+graph.add_edge(START, "sightseeing")
 graph.add_conditional_edges("sightseeing", condition_function)
 # hotel -> meal (stay = True の場合)
-graph.add_edge(START, "sightseeing")
 graph.add_edge("hotel", "meal")
 graph.add_edge("meal", "itinerary")
 graph.add_edge("itinerary", END)
-
-# # スタート地点から観光ノードへ
-# graph.set_entry_point("sightseeing")
-# graph.set_finish_point("itinerary")
 
 # グラフの構築
 app = graph.compile()
